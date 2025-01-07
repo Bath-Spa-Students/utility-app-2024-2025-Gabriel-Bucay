@@ -26,6 +26,14 @@ VMmenu = {
     },
 }   
 
+ # DISPLAY
+def display(): #to display the items
+    print("\n-----Available items-----")
+    for category, items in VMmenu.items():
+       print(f"\n{category}:")
+       for code, details in items.items():
+           print(f" {code}: {details['Item']} - ${details['Price']} (Quantity: {details['quantity']})") 
+    print()
 #ITEM HANDLING
 def IH(): #item handler
     query = input("Please enter the ITEM CODE of the item you want to purchase").upper()
@@ -41,12 +49,58 @@ def IH(): #item handler
                 print("\nApologies, this item is no longer available.")
                 break
             if not ifind:
-                print("\nInvalid code. Please try again")
-# DISPLAY
-def display(): #to display the items
-    print("\n-----Available items-----")
-    for category, items in VMmenu.items():
-       print(f"\n{category}:")
-       for code, details in items.items():
-           print(f" {code}: {details['Item']} - ${details['Price']} (Quantity: {details['quantity']})") 
-    print()
+                print("\nInvalide code. Please try again")
+
+#MONEY MANAGER
+def money_manager(price): 
+    """Manage money input and return change.""" 
+    sufficient_amount = False 
+    while not sufficient_amount: # loop to make sure proper price is given
+        user_input = input(f"Please insert ${price}: ") 
+        try:
+            money_in = float(user_input)
+            if money_in >= price:
+                change = round(money_in - price, 2)
+                print(f"Your change amount is ${change}")
+                sufficient_amount = True
+            else:
+                print("Insufficient amount payed. Please pay full.")
+        except ValueError:
+            print("Invalid input. Please insert money in numerical forms.")
+    
+#main program
+def VM_main_program():
+    while True:
+        print("\n------- My Vending Machine -------")
+        print("1. Items")
+        print("2. Picked Items")
+        print("3. Exit")
+        picked = input("Please select an option (1-3):")
+#if else statements to manage the interface and "buttons"
+        if picked == '1': # 1st option
+            display()
+        elif picked == '2': # 2nd option 
+            display()
+            num = input("Please enter the number of the item you want: ").upper()
+            ifind = False
+
+            for category, items in VMmenu.items(): #item counter for product in stock
+                if num in items:
+                    items = items[num]
+                    ifind = True
+                    if items["quantity"] > 0:
+                        money_manager(items["Price"])
+                        print(f"\nDispensing your {items['Item']}")
+                        items["quantity"] -= 1
+                    else:
+                        print("\nSorry, this item is out of stock unfortunately.")
+                    break
+            if not ifind:
+                    print("\nInvalid code. Please try again")
+        elif picked == '3': #3rd option 
+            print("THANK YOUR FOR USING THIS VENDING MACHINE. HAVE A NICE LIFE")
+            break
+        else:
+            print("Please select valid option.")
+#run the whole program 
+VM_main_program()
